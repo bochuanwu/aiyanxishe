@@ -1,5 +1,5 @@
 # coding=utf-8
-# author=yphacker
+# author=bochuan wu
 
 import os
 import time
