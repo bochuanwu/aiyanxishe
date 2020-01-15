@@ -2,7 +2,7 @@
 """
 Created on Tue Aug  6 14:47:04 2019
 
-@author: 16703
+@author: wubochuan
 """
 #from sklearn.grid_search import GridSearchCV
 from sklearn.model_selection import GridSearchCV
