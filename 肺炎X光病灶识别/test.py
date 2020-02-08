@@ -20,7 +20,7 @@ import torch
 torch.manual_seed(0)
 torch.backends.cudnn.deterministic = False
 torch.backends.cudnn.benchmark = True
-
+os.environ['CUDA_VISIBLE_DEVICES'] = '2'
 import torchvision.models as models
 import torchvision.transforms as transforms
 import torchvision.datasets as datasets
@@ -53,11 +53,11 @@ class QRDataset(Dataset):
 class VisitNet(nn.Module):
     def __init__(self):
         super(VisitNet, self).__init__()
-
+        #model = models.resnext50_32x4d(pretrained=True)
         model = models.wide_resnet50_2(pretrained=True)
         #model.avgpool = nn.AdaptiveAvgPool2d(1)
         num_ftrs = model.fc.in_features
-        model.fc = nn.Linear(num_ftrs, 5)
+        model.fc = nn.Linear(num_ftrs, 3)
         self.resnet = model
         #model = EfficientNet.from_pretrained('efficientnet-b4')
         #model._fc = nn.Linear(1280, 18)
@@ -97,12 +97,13 @@ def predict(test_loader, model, tta=5):
     return test_pred_tta
 
 
-test_jpg = ['./test/{0}.jpg'.format(x) for x in range(0, 6671)]
+test_jpg = ['./data/test/{0}.jpg'.format(x) for x in range(0, 6671)]
 test_jpg = np.array(test_jpg)
 
 test_pred = None
 for model_path in ['./resnet18_fold0.pt','./resnet18_fold1.pt','./resnet18_fold2.pt','./resnet18_fold3.pt','./resnet18_fold4.pt']:
-#for model_path in ['./resnet18_fold4.pt']:
+#for model_path in ['./resnet18_fold0.pt','./resnet18_fold1.pt','./resnet18_fold2.pt']:
+#for model_path in ['./resnet18_fold0.pt']:
     test_loader = torch.utils.data.DataLoader(
         QRDataset(test_jpg,
                   transforms.Compose([
@@ -113,7 +114,7 @@ for model_path in ['./resnet18_fold0.pt','./resnet18_fold1.pt','./resnet18_fold2
                       transforms.ToTensor(),
                       transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
                   ])
-                  ), batch_size=16, shuffle=False, num_workers=10, pin_memory=True
+                  ), batch_size=64, shuffle=False, num_workers=10, pin_memory=True
     )
 
     model = VisitNet().cuda()
@@ -130,8 +131,9 @@ for model_path in ['./resnet18_fold0.pt','./resnet18_fold1.pt','./resnet18_fold2
 # test_csv[0] = list(range(0, 1047))
 # test_csv[1] = np.argmax(test_pred, 1)
 # test_csv.to_csv('tmp.csv', index=None, header=None)
-test_pred=test_pred/5
-test_pred = pd.DataFrame(test_pred)
+#test_pred=np.argmax(test_pred, 1)
+#print(test_pred)
+#test_pred = pd.DataFrame(test_pred)
 #test_pred.columns = ['left_eye_x', 'left_eye_y', 'right_eye_x', 'right_eye_y',
 #                     'mouth_x', 'mouth_y', 'left_ear1_x', 'left_ear1_y', 'left_ear2_x',
 #                     'left_ear2_y', 'left_ear3_x', 'left_ear3_y', 'right_ear1_x',
@@ -139,11 +141,11 @@ test_pred = pd.DataFrame(test_pred)
 #                     'right_ear3_y']
 #test_pred = test_pred.reset_index()
 
-img_size = []
-for idx in (range(6671)):
-    img_size.append(cv2.imread('./test/{0}.jpg'.format(idx)).shape[:2])
+#img_size = []
+#for idx in (range(6671)):
+#    img_size.append(cv2.imread('./test/{0}.jpg'.format(idx)).shape[:2])
 
-img_size = np.vstack(img_size)
+#img_size = np.vstack(img_size)
 #test_pred['height'] = img_size[:, 0]
 #test_pred['width'] = img_size[:, 1]
 
@@ -152,5 +154,8 @@ img_size = np.vstack(img_size)
 #        test_pred[col] *= test_pred['width']
 #    elif '_y' in col:
 #        test_pred[col] *= test_pred['height']
-
-test_pred.astype(int).iloc[:].to_csv('tmp.csv', index=None, header=None)
+test_csv = pd.DataFrame()
+test_csv[0] = list(range(0, 6671))
+test_csv[1] = np.argmax(test_pred, 1)
+test_csv.to_csv('tmp5.csv', index=None, header=None)
+#test_pred.astype(int).iloc[:].to_csv('tmp.csv', index=None, header=None)
