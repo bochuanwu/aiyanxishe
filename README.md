@@ -7,3 +7,5 @@ https://www.yanxishe.com/
 3.白葡萄酒品质预测(catboost)  
 4.肺炎X光病灶识别torch(focal loss)  
 5.喵脸关键点检测torch,efficientnet_pytorch(efficientnet)  
+6.美食识别挑战（2）
+7.验证码识别（CRNN）
