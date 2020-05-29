@@ -18,6 +18,7 @@ or [run] python train.py --cfg lib/config/OWN_config.yaml
 ## References
 - https://github.com/meijieru/crnn.pytorch
 - https://github.com/HRNet
+- https://github.com/Sierkinhane/CRNN_Chinese_Characters_Rec
 
 
 
