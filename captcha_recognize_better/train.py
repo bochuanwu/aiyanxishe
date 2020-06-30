@@ -1,3 +1,4 @@
+#https://github.com/bochuanwu/aiyanxishe/
 import os
 import sys
 import time
@@ -214,6 +215,7 @@ def train(opt):
 
 
 if __name__ == '__main__':
+    #the origin code you can find in https://github.com/bochuanwu/aiyanxishe/
     parser = argparse.ArgumentParser()
     parser.add_argument('--exp_name', help='Where to store logs and models')
     parser.add_argument('--train_data', required=True, help='path to training dataset')
